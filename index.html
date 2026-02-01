@@ -80,12 +80,15 @@
 
   .yes {
     background: #ff4d6d;
-    color: white;
+  color: white;
+  z-index: 20; /* Higher than the moving No button */
+  position: relative; /* ensure z-index works */
   }
 
   .no {
     background: #ccc;
-    position: relative;
+  position: fixed; /* keep moving around */
+  z-index: 5; 
   }
 
   img {
@@ -154,9 +157,11 @@ function loadQuestion() {
         btn.className = "no";
         btn.onmouseover = () => moveButton(btn);
         btn.ontouchstart = () => moveButton(btn);
+        btn.style.zIndex = 5;
       } else {
         btn.className = "yes";
         btn.onclick = () => checkAnswer(index);
+        btn.style.zIndex = 20; 
       }
     }
 
@@ -252,3 +257,4 @@ loadQuestion();
 
 </body>
 </html>
+
