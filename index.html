@@ -1,119 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Valentine’s Quiz 💌</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #ff9a9e, #fad0c4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<title>Valentine Quiz 💘</title>
 
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      width: 350px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
+<style>
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    overflow: hidden;
+  }
 
-    h2 {
-      margin-bottom: 20px;
-    }
+  /* Floating hearts */
+  .heart {
+    position: absolute;
+    color: pink;
+    font-size: 20px;
+    animation: float 6s infinite;
+  }
 
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
+  @keyframes float {
+    0% { transform: translateY(100vh); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
 
-    .yes {
-      background-color: #ff4d6d;
-      color: white;
-    }
+  .container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .no {
-      background-color: #ccc;
-    }
+  .card {
+    background: white;
+    width: 360px;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+    z-index: 2;
+  }
 
-    .hidden {
-      display: none;
-    }
-  </style>
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .option {
+    background: #ffe0e9;
+  }
+
+  .option:hover {
+    background: #ffb3c6;
+  }
+
+  .yes {
+    background: #ff4d6d;
+    color: white;
+  }
+
+  .no {
+    background: #ccc;
+  }
+</style>
 </head>
+
 <body>
 
-<div class="card">
-  <h2 id="question"></h2>
-  <div id="buttons"></div>
+<div class="container">
+  <div class="card">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+  </div>
 </div>
 
 <script>
-  const questions = [
-    "What is my favorite thing about you? 💕",
-    "Who loves more — me or you? 😄",
-    "What’s our favorite activity together?",
-    "Who said 'I love you' first? ❤️",
-    "What food do we always fight over?",
-    "What’s my favorite nickname for you?",
-    "Where should we go for our next trip?",
-    "Who gets angry first? 😅",
-    "Who is luckier to have the other? 😉",
-    "Will you be my Valentine? 💘"
-  ];
-
-  let currentQuestion = 0;
-  const questionEl = document.getElementById("question");
-  const buttonsEl = document.getElementById("buttons");
-
-  function showQuestion() {
-    questionEl.innerText = questions[currentQuestion];
-    buttonsEl.innerHTML = "";
-
-    // Last question logic
-    if (currentQuestion === questions.length - 1) {
-      createButton("Yes 💖", "yes", yesClicked);
-      createButton("No 🙄", "no", noClicked);
-    } else {
-      createButton("Option A", "yes", nextQuestion);
-      createButton("Option B", "no", nextQuestion);
-    }
+/* ❤️ QUESTIONS CONFIGURATION ❤️ */
+const quiz = [
+  {
+    question: "Where did we first meet?",
+    options: ["Instagram", "College", "Work", "Through friends"],
+    correct: 1
+  },
+  {
+    question: "Who said 'I love you' first?",
+    options: ["Me 😌", "You 😏"],
+    correct: 1
+  },
+  {
+    question: "What is my favorite thing about you?",
+    options: ["Your smile", "Your anger 😅", "Your kindness", "Everything"],
+    correct: 2
+  },
+   {
+    question: "What is our favorite thing to do together?",
+    options: ["Travel", "Eat", "Watch movies", "All of the above"],
+    correct: 3
+  },
+  {
+    question: "Who is more dramatic?",
+    options: ["Me", "You"],
+    correct: 1
+  },
+  {
+    question: "Who apologizes first after a fight?",
+    options: ["Me 😇", "You 😅"],
+    correct: 1
+  },
+  {
+    question: "Are you enjoying this quiz? 😄",
+    options: ["Yes 😍", "Of course!", "Obviously 💕"],
+    correct: 2
+  },
+  {
+    question: "What food do we fight over the most?",
+    options: ["Pizza", "Fries", "Butter Chicken", "Noodle Burger"],
+    correct: 2
+  },
+   {
+    question: "Who is luckier to have the other?",
+    options: ["Me", "You"],
+    correct: 1
+  },
+  
+  {
+    question: "Will you be my Valentine? 💘",
+    options: ["Yes 💖", "No 🙄"],
+    correct: 0
   }
+];
 
-  function createButton(text, className, action) {
+let current = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+
+function loadQuestion() {
+  const q = quiz[current];
+  questionEl.innerText = q.question;
+  optionsEl.innerHTML = "";
+
+  q.options.forEach((opt, index) => {
     const btn = document.createElement("button");
-    btn.innerText = text;
-    btn.className = className;
-    btn.onclick = action;
-    buttonsEl.appendChild(btn);
-  }
+    btn.innerText = opt;
 
-  function nextQuestion() {
-    currentQuestion++;
-    showQuestion();
-  }
+    // LAST QUESTION LOGIC
+    if (current === quiz.length - 1 && opt.includes("No")) {
+      btn.className = "no";
+      btn.onmouseover = () => moveButton(btn);
+      btn.ontouchstart = () => moveButton(btn);
+    } else {
+      btn.className = opt.includes("Yes") ? "yes" : "option";
+      btn.onclick = () => checkAnswer(index);
+    }
 
-  function noClicked() {
-    questionEl.innerText = "❌ ERROR: Invalid choice.\nPlease reconsider your life decisions 😌";
-    buttonsEl.innerHTML = "";
-    createButton("Okay okay YES 💖", "yes", yesClicked);
-  }
+    optionsEl.appendChild(btn);
+  });
+}
 
-  function yesClicked() {
-    questionEl.innerText = "🎉 CONGRATULATIONS! 🎉\nYou have officially made me the happiest person ever 💕\nHappy Valentine’s Day ❤️";
-    buttonsEl.innerHTML = "";
+function checkAnswer(index) {
+  if (index === quiz[current].correct) {
+    score++;
   }
+  current++;
 
-  showQuestion();
+  if (current < quiz.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  questionEl.innerText = `🎉 Quiz Complete! 🎉\nYour Score: ${score}/${quiz.length}`;
+  optionsEl.innerHTML = "";
+
+  let msg = document.createElement("p");
+  msg.innerText =
+    score === quiz.length
+      ? "Perfect score! 💕 You are officially my Valentine ❤️"
+      : "Not perfect, but still MY Valentine 😌💖";
+
+  optionsEl.appendChild(msg);
+}
+
+function moveButton(btn) {
+  const x = Math.random() * 200 - 100;
+  const y = Math.random() * 200 - 100;
+  btn.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+/* Floating hearts creation */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "💖";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = Math.random() * 20 + 10 + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => heart.remove(), 6000);
+}, 400);
+
+loadQuestion();
 </script>
 
 </body>
