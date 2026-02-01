@@ -218,8 +218,10 @@ function showResult() {
   else if(score >= quiz.length/2) msg.innerText = "Not bad 😏 You passed the love test!";
   else msg.innerText = "This quiz was hard… but I still choose you 😂❤️";
 
-  msg.innerText += "\n\n🎉 Congratulations!!! You were meant to be my Valentine 💘💘";
-
+ // Always-show message
+  let congratsMsg = document.createElement("p");
+  congratsMsg.innerText = "🎉 Congratulations!!! You were meant to be my Valentine 💘💘";
+  optionsEl.appendChild(congratsMsg);
   optionsEl.appendChild(msg);
 
   const img = document.createElement("img");
@@ -259,6 +261,7 @@ loadQuestion();
 
 </body>
 </html>
+
 
 
 
