@@ -49,8 +49,13 @@
     text-align: center;
     box-shadow: 0 15px 30px rgba(0,0,0,0.25);
     animation: fadeIn 0.6s ease;
-    z-index: 2;
+    z-index: 10;
+    position: relative;
   }
+  canvas {
+  z-index: 1 !important;
+}
+
 
   @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
@@ -212,20 +217,23 @@ function checkAnswer(index) {
     score++;
   }
 
-  // 💖 FINAL YES CELEBRATION
-  if (current === quiz.length - 1 && index === 0) {
-    celebrate();
-  }
+  const isLast = current === quiz.length - 1;
+  const isYes = index === quiz[current].correct;
 
   current++;
 
-  if (current < quiz.length) {
+  if (isLast && isYes) {
+    setTimeout(() => {
+      celebrate();
+      showResult();
+    }, 300);
+  } else if (current < quiz.length) {
     loadQuestion();
   } else {
-    setTimeout(showResult, 800);
-;
+    showResult();
   }
 }
+
 
 function showResult() {
   questionEl.innerText = `🎉 Quiz Complete! 🎉\nScore: ${score}/${quiz.length}`;
@@ -297,6 +305,11 @@ setInterval(() => {
 function celebrate() {
   const duration = 5000; // 5 seconds
   const end = Date.now() + duration;
+  const confettiCanvas = document.querySelector("canvas");
+if (confettiCanvas) {
+  confettiCanvas.style.pointerEvents = "none";
+}
+
 
   (function frame() {
     confetti({
@@ -324,6 +337,7 @@ loadQuestion();
 
 </body>
 </html>
+
 
 
 
