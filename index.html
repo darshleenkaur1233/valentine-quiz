@@ -19,7 +19,6 @@
     color: rgba(255, 255, 255, 0.8);
     font-size: 20px;
     animation: float 6s linear infinite;
-    pointer-events: none;
     z-index: 1;
     pointer-events: none;   /* 👈 THIS IS THE KEY */
     opacity: 0.8;
@@ -27,7 +26,7 @@
   }
 
   @keyframes float {
-    0% { transform: translateY(0) scale (1); 
+    0% { transform: translateY(0) scale(1); 
         opacity: 0; }
     20% { opacity: 1; }
     100% { transform: translateY(-110vh) scale(1.5);
@@ -208,15 +207,26 @@ function loadQuestion() {
     const btn = document.createElement("button");
     btn.innerText = opt;
 
-    if (current === quiz.length - 1) {
-  if (opt.includes("No")) {
-    btn.className = "no";
-    btn.onmouseover = () => moveButton(btn);
-    btn.ontouchstart = () => moveButton(btn);
-  } else {
-    btn.className = "yes"; // Yes becomes pink ONLY here
-    btn.onclick = () => checkAnswer(index);
-  }
+    // ✅ NORMAL QUESTIONS
+    if (current !== quiz.length - 1) {
+      btn.className = "option";
+      btn.onclick = () => checkAnswer(index);
+    }
+
+    // 💘 FINAL QUESTION
+    else {
+      if (opt.includes("No")) {
+        btn.className = "no";
+        btn.onmouseover = () => moveButton(btn);
+        btn.ontouchstart = () => moveButton(btn);
+      } else {
+        btn.className = "yes";
+        btn.onclick = () => checkAnswer(index);
+      }
+    }
+
+    optionsEl.appendChild(btn);
+  });
 }
 
     optionsEl.appendChild(btn);
@@ -348,6 +358,7 @@ loadQuestion();
 
 </body>
 </html>
+
 
 
 
