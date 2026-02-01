@@ -16,8 +16,8 @@
   .heart {
     position: absolute;
     color: pink;
-    font-size: 20px;
-    animation: float 6s infinite;
+    animation: float 6s linear infinite;
+    opacity: 0.8;
   }
 
   @keyframes float {
@@ -40,7 +40,13 @@
     border-radius: 18px;
     text-align: center;
     box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+    animation: fadeIn 0.6s ease;
     z-index: 2;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
   }
 
   h2 {
@@ -73,13 +79,30 @@
   .no {
     background: #ccc;
   }
+
+  img {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 15px;
+  }
+
+  .confetti {
+    position: absolute;
+    font-size: 22px;
+    animation: confettiFall 3s linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-10vh); opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 0; }
+  }
 </style>
 </head>
 
 <body>
 
 <div class="container">
-  <div class="card">
+  <div class="card" id="card">
     <h2 id="question"></h2>
     <div id="options"></div>
   </div>
@@ -103,7 +126,7 @@ const quiz = [
     options: ["Your smile", "Your anger 😅", "Your kindness", "Everything"],
     correct: 2
   },
-   {
+  {
     question: "What is our favorite thing to do together?",
     options: ["Travel", "Eat", "Watch movies", "All of the above"],
     correct: 3
@@ -128,12 +151,11 @@ const quiz = [
     options: ["Pizza", "Fries", "Butter Chicken", "Noodle Burger"],
     correct: 2
   },
-   {
+  {
     question: "Who is luckier to have the other?",
     options: ["Me", "You"],
     correct: 1
   },
-  
   {
     question: "Will you be my Valentine? 💘",
     options: ["Yes 💖", "No 🙄"],
@@ -146,8 +168,13 @@ let score = 0;
 
 const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
+const card = document.getElementById("card");
 
 function loadQuestion() {
+  card.style.animation = "none";
+  card.offsetHeight;
+  card.style.animation = "fadeIn 0.6s ease";
+
   const q = quiz[current];
   questionEl.innerText = q.question;
   optionsEl.innerHTML = "";
@@ -156,7 +183,6 @@ function loadQuestion() {
     const btn = document.createElement("button");
     btn.innerText = opt;
 
-    // LAST QUESTION LOGIC
     if (current === quiz.length - 1 && opt.includes("No")) {
       btn.className = "no";
       btn.onmouseover = () => moveButton(btn);
@@ -171,9 +197,7 @@ function loadQuestion() {
 }
 
 function checkAnswer(index) {
-  if (index === quiz[current].correct) {
-    score++;
-  }
+  if (index === quiz[current].correct) score++;
   current++;
 
   if (current < quiz.length) {
@@ -184,16 +208,29 @@ function checkAnswer(index) {
 }
 
 function showResult() {
-  questionEl.innerText = `🎉 Quiz Complete! 🎉\nYour Score: ${score}/${quiz.length}`;
+  questionEl.innerText = `🎉 Quiz Complete! 🎉\nScore: ${score}/${quiz.length}`;
   optionsEl.innerHTML = "";
 
   let msg = document.createElement("p");
-  msg.innerText =
-    score === quiz.length
-      ? "Perfect score! 💕 You are officially my Valentine ❤️"
-      : "Not perfect, but still MY Valentine 😌💖";
+
+  if (score === quiz.length) {
+    msg.innerText = "Perfect score 😍 Are you secretly me? 💕";
+  } else if (score >= quiz.length - 2) {
+    msg.innerText = "Almost perfect 😌 I’ll allow it, Valentine ❤️";
+  } else if (score >= quiz.length / 2) {
+    msg.innerText = "Not bad 😏 You passed the love test!";
+  } else {
+    msg.innerText = "This quiz was hard… but I still choose you 😂❤️";
+  }
 
   optionsEl.appendChild(msg);
+
+  /* 📸 PHOTO REVEAL — CHANGE IMAGE LINK */
+  const img = document.createElement("img");
+  img.src = "https://via.placeholder.com/400x300.png?text=Us+💖";
+  optionsEl.appendChild(img);
+
+  celebrate();
 }
 
 function moveButton(btn) {
@@ -202,17 +239,29 @@ function moveButton(btn) {
   btn.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-/* Floating hearts creation */
+/* ❤️ Floating hearts */
 setInterval(() => {
   const heart = document.createElement("div");
   heart.className = "heart";
   heart.innerText = "💖";
   heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = Math.random() * 20 + 10 + "px";
+  heart.style.fontSize = Math.random() * 20 + 12 + "px";
   document.body.appendChild(heart);
-
   setTimeout(() => heart.remove(), 6000);
 }, 400);
+
+/* 🎉 Celebration */
+function celebrate() {
+  for (let i = 0; i < 35; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.innerText = "🎉";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.animationDuration = Math.random() * 2 + 2 + "s";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
 
 loadQuestion();
 </script>
