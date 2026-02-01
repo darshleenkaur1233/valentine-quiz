@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>Valentine Quiz 💘</title>
 
+<!-- ✅ Confetti library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
   body {
     margin: 0;
@@ -20,48 +23,36 @@
     font-size: 20px;
     animation: float 6s linear infinite;
     z-index: 1;
-    pointer-events: none;   /* 👈 THIS IS THE KEY */
+    pointer-events: none;
     opacity: 0.8;
-  
   }
 
   @keyframes float {
-    0% { transform: translateY(0) scale(1); 
-        opacity: 0; }
+    0% { transform: translateY(0) scale(1); opacity: 0; }
     20% { opacity: 1; }
-    100% { transform: translateY(-110vh) scale(1.5);
-        opacity: 0;
-         }
+    100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
   }
 
   .container {
     height: 100vh;
-    position: relative;
-    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
   .card {
     background: white;
+    min-width: 320px;
+    max-width: 400px;
     width: 360px;
     padding: 25px;
     border-radius: 18px;
     text-align: center;
     box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-    /* animation: fadeIn 0.6s ease; */
     position: relative;
     z-index: 10;
-  }
-  canvas {
-  z-index: 1 !important;
-}
-
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
   }
 
   h2 {
@@ -76,6 +67,7 @@
     border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
 
   .option {
@@ -93,36 +85,22 @@
 
   .no {
     background: #ccc;
-    transition: all 0.25s ease;
+    position: relative;
   }
 
   img {
-    width: 100%;
-    border-radius: 12px;
-    margin-top: 15px;
+    width: 90%;
+    max-width: 350px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(255,0,100,0.3);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
-
-  .confetti {
-    position: absolute;
-    font-size: 22px;
-    animation: confettiFall 3s linear forwards;
-  }
-
-  @keyframes confettiFall {
-    0% { transform: translateY(-10vh); opacity: 1; }
-    100% { transform: translateY(110vh); opacity: 0; }
-  }
-  * {
-  pointer-events: auto;
-}
-
-.heart {
-  pointer-events: none !important;
-}
 
 </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -133,58 +111,18 @@
 </div>
 
 <script>
-/* ❤️ QUESTIONS CONFIGURATION ❤️ */
+/* ❤️ Quiz questions */
 const quiz = [
-  {
-    question: "Where did we first meet?",
-    options: ["Instagram", "College", "Work", "Through friends"],
-    correct: 1
-  },
-  {
-    question: "Who said 'I love you' first?",
-    options: ["Me 😌", "You 😏"],
-    correct: 1
-  },
-  {
-    question: "What is my favorite thing about you?",
-    options: ["Your smile", "Your anger 😅", "Your kindness", "Everything"],
-    correct: 2
-  },
-  {
-    question: "What is our favorite thing to do together?",
-    options: ["Travel", "Eat", "Watch movies", "All of the above"],
-    correct: 3
-  },
-  {
-    question: "Who is more dramatic?",
-    options: ["Me", "You"],
-    correct: 1
-  },
-  {
-    question: "Who apologizes first after a fight?",
-    options: ["Me 😇", "You 😅"],
-    correct: 1
-  },
-  {
-    question: "Are you enjoying this quiz? 😄",
-    options: ["Yes 😍", "Of course!", "Obviously 💕"],
-    correct: 2
-  },
-  {
-    question: "What food do we fight over the most?",
-    options: ["Pizza", "Fries", "Butter Chicken", "Noodle Burger"],
-    correct: 2
-  },
-  {
-    question: "Who is luckier to have the other?",
-    options: ["Me", "You"],
-    correct: 1
-  },
-  {
-    question: "Will you be my Valentine? 💘",
-    options: ["Yes 💖", "No 🙄"],
-    correct: 0
-  }
+  {question: "Where did we first meet?", options: ["Instagram", "College", "Work", "Through friends"], correct: 1},
+  {question: "Who said 'I love you' first?", options: ["Me 😌", "You 😏"], correct: 1},
+  {question: "What is my favorite thing about you?", options: ["Your smile", "Your anger 😅", "Your kindness", "Everything"], correct: 2},
+  {question: "What is our favorite thing to do together?", options: ["Travel", "Eat", "Watch movies", "All of the above"], correct: 3},
+  {question: "Who is more dramatic?", options: ["Me", "You"], correct: 1},
+  {question: "Who apologizes first after a fight?", options: ["Me 😇", "You 😅"], correct: 1},
+  {question: "Are you enjoying this quiz? 😄", options: ["Yes 😍", "Of course!", "Obviously 💕"], correct: 2},
+  {question: "What food do we fight over the most?", options: ["Pizza", "Fries", "Butter Chicken", "Noodle Burger"], correct: 2},
+  {question: "Who is luckier to have the other?", options: ["Me", "You"], correct: 1},
+  {question: "Will you be my Valentine? 💘", options: ["Yes 💖", "No 🙄"], correct: 0}
 ];
 
 let current = 0;
@@ -194,6 +132,7 @@ const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
 const card = document.getElementById("card");
 
+/* Load question */
 function loadQuestion() {
   card.style.animation = "none";
   card.offsetHeight;
@@ -207,14 +146,11 @@ function loadQuestion() {
     const btn = document.createElement("button");
     btn.innerText = opt;
 
-    // ✅ For all non-final questions, normal options
-    if (current !== quiz.length - 1) {
+    if(current !== quiz.length - 1) {
       btn.className = "option";
       btn.onclick = () => checkAnswer(index);
-    } 
-    // 💘 For final question
-    else {
-      if (opt.includes("No")) {
+    } else {
+      if(opt.includes("No")) {
         btn.className = "no";
         btn.onmouseover = () => moveButton(btn);
         btn.ontouchstart = () => moveButton(btn);
@@ -228,67 +164,29 @@ function loadQuestion() {
   });
 }
 
-
+/* Check answer */
 function checkAnswer(index) {
-  if (index === quiz[current].correct) {
-    score++;
-  }
+  if(index === quiz[current].correct) score++;
 
   const isLast = current === quiz.length - 1;
   const isYes = index === quiz[current].correct;
 
   current++;
 
-  if (isLast && isYes) {
+  if(isLast && isYes) {
     setTimeout(() => {
       celebrate();
       showResult();
     }, 300);
-  } else if (current < quiz.length) {
+  } else if(current < quiz.length) {
     loadQuestion();
   } else {
     showResult();
   }
 }
 
-
-function showResult() {
-  questionEl.innerText = `🎉 Quiz Complete! 🎉\nScore: ${score}/${quiz.length}`;
-  optionsEl.innerHTML = "";
-
-  let msg = document.createElement("p");
-
-  if (score === quiz.length) {
-    msg.innerText = "Perfect score 😍 Are you secretly me? 💕";
-  } else if (score >= quiz.length - 2) {
-    msg.innerText = "Almost perfect 😌 I’ll allow it, Valentine ❤️";
-  } else if (score >= quiz.length / 2) {
-    msg.innerText = "Not bad 😏 You passed the love test!";
-  } else {
-    msg.innerText = "This quiz was hard… but I still choose you 😂❤️";
-  }
-
-  optionsEl.appendChild(msg);
-
-  /* 📸 PHOTO REVEAL — CHANGE IMAGE LINK */
-  const img = document.createElement("img");
-img.src = "https://raw.githubusercontent.com/darshleenkaur1233/valentine-quiz/7e054ead74c81ec2a61b23c4c15d2458fad83ddc/valentine%20photo.jpeg";
-img.alt = "Valentine Photo";
-img.style.width = "90%";
-img.style.maxWidth = "350px";
-img.style.marginTop = "20px";
-img.style.borderRadius = "15px";
-img.style.boxShadow = "0 10px 25px rgba(255,0,100,0.3)";
-img.style.display = "block";
-
-optionsEl.appendChild(img);
-
-  celebrate();
-}
-
+/* Move No button */
 function moveButton(btn) {
-  btn.style.position = "fixed";
-
   const padding = 20;
   const btnWidth = btn.offsetWidth;
   const btnHeight = btn.offsetHeight;
@@ -299,66 +197,58 @@ function moveButton(btn) {
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
 
+  btn.style.position = "fixed";
   btn.style.left = x + "px";
   btn.style.top = y + "px";
 }
 
+/* Show results */
+function showResult() {
+  questionEl.innerText = `🎉 Quiz Complete! 🎉\nScore: ${score}/${quiz.length}`;
+  optionsEl.innerHTML = "";
 
-/* ❤️ Floating hearts */
+  let msg = document.createElement("p");
+  if(score === quiz.length) msg.innerText = "Perfect score 😍 Are you secretly me? 💕";
+  else if(score >= quiz.length-2) msg.innerText = "Almost perfect 😌 I’ll allow it, Valentine ❤️";
+  else if(score >= quiz.length/2) msg.innerText = "Not bad 😏 You passed the love test!";
+  else msg.innerText = "This quiz was hard… but I still choose you 😂❤️";
+
+  optionsEl.appendChild(msg);
+
+  const img = document.createElement("img");
+  img.src = "https://raw.githubusercontent.com/darshleenkaur1233/valentine-quiz/7e054ead74c81ec2a61b23c4c15d2458fad83ddc/valentine%20photo.jpeg";
+  img.alt = "Valentine Photo";
+  optionsEl.appendChild(img);
+
+  celebrate();
+}
+
+/* Floating hearts */
 setInterval(() => {
   const heart = document.createElement("div");
   heart.className = "heart";
-  heart.innerText = ["💖", "💘", "💕", "❤️"][Math.floor(Math.random() * 4)];
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = Math.random() * 20 + 10 + "px";
-  heart.style.animationDuration = Math.random() * 3 + 4 + "s";
-
+  heart.innerText = ["💖","💘","💕","❤️"][Math.floor(Math.random()*4)];
+  heart.style.left = Math.random()*100+"vw";
+  heart.style.fontSize = Math.random()*20+10+"px";
+  heart.style.animationDuration = Math.random()*3+4+"s";
   document.body.appendChild(heart);
-
-  setTimeout(() => heart.remove(), 3000);
+  setTimeout(() => heart.remove(), 6000);
 }, 300);
 
 /* 🎉 Celebration */
 function celebrate() {
-  const duration = 5000; // 5 seconds
+  const duration = 5000;
   const end = Date.now() + duration;
-  const confettiCanvas = document.querySelector("canvas");
-if (confettiCanvas) {
-  confettiCanvas.style.pointerEvents = "none";
-}
-
 
   (function frame() {
-    confetti({
-      particleCount: 6,
-      angle: 60,
-      spread: 70,
-      origin: { x: 0 }
-    });
-    confetti({
-      particleCount: 6,
-      angle: 120,
-      spread: 70,
-      origin: { x: 1 }
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
+    confetti({ particleCount: 6, angle: 60, spread: 70, origin: { x:0 } });
+    confetti({ particleCount: 6, angle: 120, spread: 70, origin: { x:1 } });
+    if(Date.now() < end) requestAnimationFrame(frame);
   })();
 }
-
 
 loadQuestion();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
