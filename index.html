@@ -207,13 +207,12 @@ function loadQuestion() {
     const btn = document.createElement("button");
     btn.innerText = opt;
 
-    // ✅ NORMAL QUESTIONS
+    // ✅ For all non-final questions, normal options
     if (current !== quiz.length - 1) {
       btn.className = "option";
       btn.onclick = () => checkAnswer(index);
-    }
-
-    // 💘 FINAL QUESTION
+    } 
+    // 💘 For final question
     else {
       if (opt.includes("No")) {
         btn.className = "no";
@@ -229,9 +228,6 @@ function loadQuestion() {
   });
 }
 
-    optionsEl.appendChild(btn);
-  });
-}
 
 function checkAnswer(index) {
   if (index === quiz[current].correct) {
@@ -358,6 +354,7 @@ loadQuestion();
 
 </body>
 </html>
+
 
 
 
