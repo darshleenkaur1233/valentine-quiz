@@ -227,8 +227,16 @@ function showResult() {
 
   /* 📸 PHOTO REVEAL — CHANGE IMAGE LINK */
   const img = document.createElement("img");
-  img.src = "https://raw.githubusercontent.com/darshleenkaur1233/valentine-quiz/7e054ead74c81ec2a61b23c4c15d2458fad83ddc/valentine%20photo.jpeg";
-  optionsEl.appendChild(img);
+img.src = "https://raw.githubusercontent.com/darshleenkaur1233/valentine-quiz/7e054ead74c81ec2a61b23c4c15d2458fad83ddc/valentine%20photo.jpeg";
+img.alt = "Valentine Photo";
+img.style.width = "90%";
+img.style.maxWidth = "350px";
+img.style.marginTop = "20px";
+img.style.borderRadius = "15px";
+img.style.boxShadow = "0 10px 25px rgba(255,0,100,0.3)";
+img.style.display = "block";
+
+optionsEl.appendChild(img);
 
   celebrate();
 }
@@ -268,4 +276,5 @@ loadQuestion();
 
 </body>
 </html>
+
 
