@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine’s Quiz 💌</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .yes {
+      background-color: #ff4d6d;
+      color: white;
+    }
+
+    .no {
+      background-color: #ccc;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 id="question"></h2>
+  <div id="buttons"></div>
+</div>
+
+<script>
+  const questions = [
+    "What is my favorite thing about you? 💕",
+    "Who loves more — me or you? 😄",
+    "What’s our favorite activity together?",
+    "Who said 'I love you' first? ❤️",
+    "What food do we always fight over?",
+    "What’s my favorite nickname for you?",
+    "Where should we go for our next trip?",
+    "Who gets angry first? 😅",
+    "Who is luckier to have the other? 😉",
+    "Will you be my Valentine? 💘"
+  ];
+
+  let currentQuestion = 0;
+  const questionEl = document.getElementById("question");
+  const buttonsEl = document.getElementById("buttons");
+
+  function showQuestion() {
+    questionEl.innerText = questions[currentQuestion];
+    buttonsEl.innerHTML = "";
+
+    // Last question logic
+    if (currentQuestion === questions.length - 1) {
+      createButton("Yes 💖", "yes", yesClicked);
+      createButton("No 🙄", "no", noClicked);
+    } else {
+      createButton("Option A", "yes", nextQuestion);
+      createButton("Option B", "no", nextQuestion);
+    }
+  }
+
+  function createButton(text, className, action) {
+    const btn = document.createElement("button");
+    btn.innerText = text;
+    btn.className = className;
+    btn.onclick = action;
+    buttonsEl.appendChild(btn);
+  }
+
+  function nextQuestion() {
+    currentQuestion++;
+    showQuestion();
+  }
+
+  function noClicked() {
+    questionEl.innerText = "❌ ERROR: Invalid choice.\nPlease reconsider your life decisions 😌";
+    buttonsEl.innerHTML = "";
+    createButton("Okay okay YES 💖", "yes", yesClicked);
+  }
+
+  function yesClicked() {
+    questionEl.innerText = "🎉 CONGRATULATIONS! 🎉\nYou have officially made me the happiest person ever 💕\nHappy Valentine’s Day ❤️";
+    buttonsEl.innerHTML = "";
+  }
+
+  showQuestion();
+</script>
+
+</body>
+</html>
